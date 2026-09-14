@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import LoginPage from "./Login";
 import ItemPage from "./Item";
+import UserPage from "./User";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         {/* หน้า Home สำหรับคนที่ล็อกอินแล้ว */}
         <Route path="/" element={<Home />}>
            <Route path="item" element={<ItemPage />} /> 
+           <Route path="user" element={<UserPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

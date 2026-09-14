@@ -51,9 +51,7 @@ export function UserProvider({ children }) {
       body: JSON.stringify(body), 
     }); 
     if (result.ok) { 
-      const data = await result.json(); 
-      setUser(data.user); 
-      setIsLoggedIn(true); 
+      await me();
       return true; 
     } else { 
       const errData = await result.json(); 

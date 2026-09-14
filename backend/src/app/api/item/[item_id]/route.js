@@ -1,3 +1,4 @@
+import { X_HEADER_USER_EMAIL, X_HEADER_USER_NAME } from "@/lib/constant";
 // src/app/api/item/[item_id]/route.js
 import { getClientPromise } from "@/lib/mongodb";
 import { errorResponse, printExceptionLog, successResponse } from "@/lib/utils";
@@ -24,6 +25,8 @@ export async function GET(request, { params }) {
   }
 }
 
+
+
 export async function DELETE(request, { params }) {
   const { item_id } = await params;
   try {
@@ -37,6 +40,18 @@ export async function DELETE(request, { params }) {
         { _id: new ObjectId(item_id) }, 
         { $set: { status: "DELETED" } }
       );
+
+    // --- Audit Log ---
+    const userEmail = request.headers.get(X_HEADER_USER_EMAIL) || "unknown";
+    const userName = request.headers.get(X_HEADER_USER_NAME) || "unknown";
+    await db.collection("audit_log").insertOne({
+      action: "DELETE_ITEM",
+      itemId: new ObjectId(item_id),
+      userEmail: userEmail,
+      userName: userName,
+      timestamp: new Date()
+    });
+    // -----------------
 
     return successResponse({ message: "Soft Delete Success" }, 200);
   } catch (error) {

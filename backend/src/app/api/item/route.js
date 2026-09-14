@@ -1,3 +1,4 @@
+import { X_HEADER_USER_EMAIL, X_HEADER_USER_NAME } from "@/lib/constant";
 // src/app/api/item/route.js
 import { getClientPromise } from "@/lib/mongodb";
 import { errorResponse, printExceptionLog, successResponse } from "@/lib/utils";
@@ -28,6 +29,8 @@ export async function GET(request) {
   }
 }
 
+
+
 export async function POST(request) {
   try {
     const data = await request.json();
@@ -46,6 +49,19 @@ export async function POST(request) {
       amount: amount,
       status: "ACTIVE", // Set default status for new items
     });
+
+    // --- Audit Log ---
+    const userEmail = request.headers.get(X_HEADER_USER_EMAIL) || "unknown";
+    const userName = request.headers.get(X_HEADER_USER_NAME) || "unknown";
+    await db.collection("audit_log").insertOne({
+      action: "ADD_ITEM",
+      itemId: insertResult.insertedId,
+      itemName: name,
+      userEmail: userEmail,
+      userName: userName,
+      timestamp: new Date()
+    });
+    // -----------------
 
     return successResponse(
       {
