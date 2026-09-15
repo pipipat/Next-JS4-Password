@@ -18,7 +18,7 @@ export default function Home() {
     if (!isLoggedIn && !isInitializing) {
       navigate("/login");
     }
-  }, [isInitializing]);
+  }, [isInitializing, isLoggedIn, navigate]);
 
   if (isInitializing) return <></>;
 
@@ -38,8 +38,6 @@ export default function Home() {
           >
             Item
           </Button>
-
-          {/* เพิ่มส่วนนี้: แสดงปุ่ม User เฉพาะเมื่อผู้ใช้มี _id หรือ id เป็น "-1" (Admin) */}
           {(user?._id == "-1" || user?.id == "-1") && (
             <Button
               color="inherit"
@@ -54,12 +52,12 @@ export default function Home() {
           <Button
             color="inherit"
             onClick={async () => {
-              const result = await fetch(`${API_URL}/api/auth/logout`, {
+              await fetch(`${API_URL}/api/auth/logout`, {
                 credentials: "include",
               });
-              if (result.ok) {
-                window.location.reload(true);
-              }
+              
+              // 2. บังคับเปลี่ยนหน้าไปที่ Login ทันที
+              window.location.href = "/login";
             }}
           >
             Logout
