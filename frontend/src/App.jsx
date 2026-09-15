@@ -15,6 +15,7 @@ function App() {
         
         {/* หน้า Home สำหรับคนที่ล็อกอินแล้ว */}
         <Route path="/" element={<Home />}>
+           <Route index element={<ItemPage />} />
            <Route path="item" element={<ItemPage />} /> 
            <Route path="user" element={<UserPage />} />
         </Route>
