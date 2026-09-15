@@ -38,6 +38,8 @@ export default function Home() {
           >
             Item
           </Button>
+
+          {/* แสดงปุ่ม User เฉพาะเมื่อผู้ใช้มี _id หรือ id เป็น "-1" (Admin) */}
           {(user?._id == "-1" || user?.id == "-1") && (
             <Button
               color="inherit"
@@ -52,11 +54,21 @@ export default function Home() {
           <Button
             color="inherit"
             onClick={async () => {
-              await fetch(`${API_URL}/api/auth/logout`, {
-                credentials: "include",
-              });
+              try {
+                // 1. เรียก API แจ้ง Backend ให้ลบคุกกี้ออก (บังคับใช้ POST ถ้าทำได้)
+                await fetch(`${API_URL}/api/auth/logout`, {
+                  method: "POST", 
+                  credentials: "include",
+                });
+              } catch (error) {
+                console.error("Logout failed:", error);
+              }
               
-              // 2. บังคับเปลี่ยนหน้าไปที่ Login ทันที
+              // 2. เคลียร์ข้อมูลใน Local/Session เผื่อระบบฝัง Token ไว้ที่นี่
+              localStorage.clear();
+              sessionStorage.clear();
+              
+              // 3. บังคับเปลี่ยนหน้าไปที่ Login ทันที
               window.location.href = "/login";
             }}
           >
