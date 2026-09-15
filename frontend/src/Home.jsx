@@ -12,7 +12,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Home() {
   const navigate = useNavigate();
-  const { user, isLoggedIn, isInitializing } = useContext(UserContext);
+  const { user, isLoggedIn, isInitializing, logout } = useContext(UserContext);
 
   useEffect(() => {
     if (!isLoggedIn && !isInitializing) {
@@ -54,22 +54,9 @@ export default function Home() {
           <Button
             color="inherit"
             onClick={async () => {
-              try {
-                // 1. เรียก API แจ้ง Backend ให้ลบคุกกี้ออก (บังคับใช้ POST ถ้าทำได้)
-                await fetch(`${API_URL}/api/auth/logout`, {
-                  method: "POST", 
-                  credentials: "include",
-                });
-              } catch (error) {
-                console.error("Logout failed:", error);
-              }
-              
-              // 2. เคลียร์ข้อมูลใน Local/Session เผื่อระบบฝัง Token ไว้ที่นี่
+              await logout();
               localStorage.clear();
               sessionStorage.clear();
-              
-              // 3. บังคับเปลี่ยนหน้าไปที่ Login ทันที
-              window.location.href = "/login";
             }}
           >
             Logout
